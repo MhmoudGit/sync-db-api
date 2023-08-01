@@ -10,6 +10,9 @@
 2 - one to many
 3 - many to many
 
+## primary key and forign key
+A primary key is used to ensure data in the specific column is unique. A foreign key is a column or group of columns in a relational database table that provides a link between data in two tables
+
 ## Models
 1 - Categories:
 
