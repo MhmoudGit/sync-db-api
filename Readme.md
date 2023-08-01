@@ -23,6 +23,7 @@ A primary key is used to ensure data in the specific column is unique. A foreign
 2 - Items:
 
     - id
+    - image
     - category_id -Relation forign key
     - title
     - description

@@ -9,6 +9,7 @@ class Item(Base):
     __tablename__ = "items"
 
     id = Column(Integer, primary_key=True, nullable=False, unique=True, index=True)
+    image = Column(String)
     title = Column(String, nullable=False)
     description = Column(String, nullable=False)
     owner_name = Column(String, nullable=False)
@@ -24,6 +25,7 @@ class Item(Base):
 
 ## pydantic models aka schema
 class ItemPost(BaseModel):
+    image: str
     title: str
     description: str
     owner_name: str
