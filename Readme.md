@@ -1,3 +1,15 @@
+## Setup and Required libararies
+    - Fastapi[ALL]
+    - psycopg2 -> a driver for postgresql
+    - sqlalchemy -> orm
+    - pyjwt -> for jwt 
+    - passlib[bcrypt] -> for hashing passwords
+
+## Database Relations 
+1 - one to one 
+2 - one to many
+3 - many to many
+
 ## Models
 1 - Categories:
 
