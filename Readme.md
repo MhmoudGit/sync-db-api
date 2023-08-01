@@ -1,10 +1,12 @@
 ## Models
 1 - Categories:
+
     - id
     - name [Animals - Accessories - lost]
     - list[Items] -Relation
 
 2 - Items:
+
     - id
     - category_id -Relation
     - title
@@ -14,6 +16,7 @@
     - location
 
 3 - Users:
+
     - id
     - username
     - password
@@ -25,11 +28,13 @@
 
 ## Routes
 1 - Auth:
+
     - register
     - login
     - logout
 
 2 - Categories:
+
     - get all
     - get by id 
     - post  [Seller]
@@ -37,6 +42,7 @@
     - delete    [Seller]
 
 3 - Items:
+
     - get by category
     - get by id 
     - post  [Seller]
