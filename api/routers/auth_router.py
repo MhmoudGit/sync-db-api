@@ -23,7 +23,7 @@ router = APIRouter(
 
 # users register
 @router.post("/register", response_model=users_model.GetLogin)
-async def login(
+async def register(
     user: users_model.UserCreate,
     db: Session = Depends(get_db),
 ):
@@ -41,7 +41,10 @@ async def login(
 
 
 # users login
-@router.post("/login", response_model=users_model.GetLogin)
+@router.post(
+    "/login",
+    response_model=users_model.GetLogin,
+)
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
@@ -54,24 +57,8 @@ async def login(
     access_token = await create_token(user)
     return {
         "user": user,
-        "token": access_token,
+        "access_token": access_token,
     }
-
-
-# # users logout
-# @router.get("/logout")
-# async def logout(
-#     db: Session = Depends(get_db),
-#     token: str = Depends(get_token),
-# ):
-#     revoke: RevokedTokens.RevokedCreate = {
-#         "uuid": token["jti"],
-#     }
-#     revoke_token = RevokedTokens.Revoked(**revoke)
-#     db.add(revoke_token)
-#     db.commit()
-#     db.refresh(revoke_token)
-#     return {"logged out": "success"}
 
 
 ## Helpers

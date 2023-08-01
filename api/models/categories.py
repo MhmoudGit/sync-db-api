@@ -22,8 +22,11 @@ class CategoryPost(BaseModel):
         from_attributes = True
 
 
-class CategoryGet(CategoryPost):
+class AllCategories(CategoryPost):
     id: int
+
+
+class CategoryGet(AllCategories):
     items: list[ItemGet]
 
     class Config:

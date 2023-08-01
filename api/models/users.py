@@ -48,4 +48,4 @@ class UserGet(BaseModel):
 
 class GetLogin(BaseModel):
     user: UserGet
-    token: str
+    access_token: str

@@ -16,24 +16,30 @@ router = APIRouter(
 # get all categories
 @router.get(
     "",
-    response_model=list[categories_model.CategoryGet],
+    response_model=list[categories_model.AllCategories],
 )
 async def get_categories(
     db: Session = Depends(get_db),
 ):
-    pass
+    categories = db.query(categories_model.Category).all()
+    if not categories:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
+    return categories
 
 
 # get single category by id
 @router.get(
     "/{id}",
-    response_model=list[categories_model.CategoryGet],
+    response_model=categories_model.CategoryGet,
 )
 async def get_category(
     id: int,
     db: Session = Depends(get_db),
 ):
-    pass
+    category = db.query(categories_model.Category).filter_by(id=id).first()
+    if not category:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
+    return category
 
 
 # get single category items
@@ -45,7 +51,10 @@ async def get_category_items(
     id: int,
     db: Session = Depends(get_db),
 ):
-    pass
+    category = db.query(categories_model.Category).filter_by(id=id).first()
+    if not category:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
+    return category.items
 
 
 # post category for sellers only
@@ -57,7 +66,16 @@ async def post_category(
     db: Session = Depends(get_db),
     token: str = Depends(get_token),
 ):
-    pass
+    if token["role"] == "seller":
+        new_category = categories_model.Category(**category.model_dump())
+        db.add(new_category)
+        db.commit()
+        db.refresh(new_category)
+        return {"message": "new category was created successfully"}
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not Authorized"
+        )
 
 
 # put category for sellers only
@@ -70,7 +88,20 @@ async def put_category(
     db: Session = Depends(get_db),
     token: str = Depends(get_token),
 ):
-    pass
+    if token["role"] == "seller":
+        old_category = db.query(categories_model.Category).filter_by(id=id)
+        if old_category.first():
+            old_category.update(new_category.model_dump(), synchronize_session=False)
+            db.commit()
+            return {"message": "category updated successfully"}
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Not Found"
+            )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not Authorized"
+        )
 
 
 # delete category for sellers only
@@ -82,28 +113,17 @@ async def delete_category(
     db: Session = Depends(get_db),
     token: str = Depends(get_token),
 ):
-    pass
-
-
-# # get board categorys
-# @router.get(
-#     "",
-#     response_model=list[categories_model.CategoryGet],
-# )
-# async def get_categories(db: Session = Depends(get_db)):
-#     categories = db.query(categories_model.Categories).all()
-#     if not categories:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
-#     return categories
-
-
-# @router.post("")
-# async def post_categories(
-#     category: categories_model.CategoryPost,
-#     db: Session = Depends(get_db),
-# ):
-#     new_category = categories_model.Categories(**category.model_dump())
-#     db.add(new_category)
-#     db.commit()
-#     db.refresh(new_category)
-#     return {"message": "new category was created successfully"}
+    if token["role"] == "seller":
+        old_category = db.query(categories_model.Category).filter_by(id=id)
+        if old_category.first():
+            old_category.delete()
+            db.commit()
+            return {"message": "category deleted successfully"}
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Not Found"
+            )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not Authorized"
+        )
