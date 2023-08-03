@@ -78,11 +78,47 @@ async def post_item(
 )
 async def put_item(
     id: int,
-    new_item: items_model.ItemPost,
+    image: UploadFile = File(None),
+    category_id: int = Form(...),
+    title: str = Form(...),
+    description: str = Form(...),
+    owner_name: str = Form(...),
+    phone_number: str = Form(...),
+    location: str = Form(...),
     db: Session = Depends(get_db),
     token: str = Depends(get_token),
 ):
-    pass
+    if token["role"] == "seller":
+        item: items_model.ItemPost = {
+            "category_id": category_id,
+            "title": title,
+            "description": description,
+            "owner_name": owner_name,
+            "phone_number": phone_number,
+            "location": location,
+        }
+        old_item = db.query(items_model.Item).filter_by(id=id)
+        if old_item.first():
+            if image:
+                await uploads(image)
+            item["image"] = (
+                f"/images/{image.filename}"
+                if image is not None
+                else old_item.first().image,
+            )
+            old_item.update(item.model_dump(), synchronize_session=False)
+            db.commit()
+            return {"message": "item updated successfully"}
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"director with id {id} doesnt exist",
+            )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Invalid Access",
+        )
 
 
 # delete item for sellers only
@@ -94,7 +130,20 @@ async def delete_item(
     db: Session = Depends(get_db),
     token: str = Depends(get_token),
 ):
-    pass
+    if token["role"] == "seller":
+        old_item = db.query(items_model.Item).filter_by(id=id)
+        if old_item.first():
+            old_item.delete()
+            db.commit()
+            return {"message": "item deleted successfully"}
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Not Found"
+            )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not Authorized"
+        )
 
 
 ### upload images
