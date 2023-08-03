@@ -32,7 +32,7 @@ async def register(
         access_token = await create_token(new_user)
         return {
             "user": new_user,
-            "token": access_token,
+            "access_token": access_token,
         }
     else:
         raise HTTPException(
@@ -61,7 +61,7 @@ async def login(
     }
 
 
-## Helpers
+## -----------------Helpers
 async def get_user_by_username(username: str, db: Session = Depends(get_db)):
     return (
         db.query(users_model.User).filter(users_model.User.username == username).first()

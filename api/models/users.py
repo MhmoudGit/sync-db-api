@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from passlib import hash
 
 
-# postgres model for users of the postgres database
+# postgres model for product of the postgres database
 class User(Base):
     __tablename__ = "users"
 

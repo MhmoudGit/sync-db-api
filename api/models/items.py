@@ -25,7 +25,7 @@ class Item(Base):
 
 ## pydantic models aka schema
 class ItemPost(BaseModel):
-    image: str
+    image: str | None
     title: str
     description: str
     owner_name: str

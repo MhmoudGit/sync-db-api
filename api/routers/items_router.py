@@ -16,7 +16,7 @@ router = APIRouter(
 # get single item by id
 @router.get(
     "/{id}",
-    response_model=list[items_model.ItemGet],
+    response_model=items_model.ItemGet,
 )
 async def get_item(
     id: int,
@@ -112,7 +112,7 @@ async def put_item(
         else:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"director with id {id} doesnt exist",
+                detail=f"item with id {id} doesnt exist",
             )
     else:
         raise HTTPException(
