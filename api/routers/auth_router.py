@@ -71,6 +71,11 @@ async def get_user_by_username(username: str, db: Session = Depends(get_db)):
 async def user_create(user: users_model.UserCreate, db: Session):
     hashed_password = hash.bcrypt.hash(user.password)
     user.password = hashed_password
+    check_user = await get_user_by_username(user.username, db)
+    if check_user is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Bad Request"
+        )
     new_user = users_model.User(**user.model_dump())
     db.add(new_user)
     db.commit()
