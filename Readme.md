@@ -1,3 +1,9 @@
+## To run the project
+1 - pip install -r requirements.txt
+2 - set the .env file to your local database
+3 - uvicorn api.main:app --reload
+
+
 ## Setup and Required libararies
     - Fastapi[ALL]
     - psycopg2 -> a driver for postgresql
